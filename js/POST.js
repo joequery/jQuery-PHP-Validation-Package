@@ -1,8 +1,10 @@
 /************************************************************/
 //Class POST
-//Purpose: Easily communicate with server via POST
+//Purpose: Easily communicate with server via POST. Yes, 
+//         I realize it's a wrapper for a wrapper, but I like it.
 //Parameters:
 //  url: The URL of the PHP file that will send a response
+//  callback: The callback function.
 /************************************************************/
 function POST(url, callback)
 {            
@@ -19,7 +21,8 @@ function POST(url, callback)
     //=========================================================//
     this.set = function(field, val)
     {        
-        //Check to see if this field already exists
+        //Check to see if this field already exists.
+		//Legal URL characters. See http://www.ietf.org/rfc/rfc1738.txt
         var re = new RegExp(field + "=[a-zA-Z0-9%+.!$()_+*'-]*");        
         var match = re.exec(str);
         
