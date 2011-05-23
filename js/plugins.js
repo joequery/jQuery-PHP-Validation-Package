@@ -1,3 +1,7 @@
+// File: plugins.js
+// Purpose: Shared plugins throughout the package
+
+
 //-------------------------------Function isset-------------------------------//
 // Purpose: Determines if a variable has been set/initialized
 // PARAMETERS:
