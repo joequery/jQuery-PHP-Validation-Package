@@ -1,9 +1,9 @@
 /************************************************************/
-//Class GetSet
+//Class this
 //Purpose: Creates dynamic getters and setters
 /************************************************************/
 
-var GetSet = {};
+function GetSet(){
 
 //=========================================================//
 //Public Method override
@@ -12,7 +12,7 @@ var GetSet = {};
 //  obj: The object whose default values will be overridden
 //Postcondition: options Object is altered
 //=========================================================//
-GetSet.override = function(options, defaults)
+this.override = function(options, defaults)
 {
     //Store this scope
     var $this = options;
@@ -39,7 +39,7 @@ GetSet.override = function(options, defaults)
 //Postcondition: scope has been altered to include
 //accessor methods
 //=========================================================//
-GetSet.getters = function(options)
+this.getters = function(options)
 {   
     //Over-ride default values
     var defaults =
@@ -49,7 +49,7 @@ GetSet.getters = function(options)
     };
     
     //Override defaults values
-    GetSet.override(options, defaults);
+    this.override(options, defaults);
     
     //If prefix is set to 'none', force blank. A blank string as a parameter
     //evaluates to null for some reason.
@@ -91,7 +91,7 @@ GetSet.getters = function(options)
 //Postcondition: scope has been altered to include mutator
 //methods
 //=========================================================//
-GetSet.setters = function(options)
+this.setters = function(options)
 {
     //Over-ride default values
     var defaults =
@@ -101,7 +101,7 @@ GetSet.setters = function(options)
     };
     
     //Override defaults values
-    GetSet.override(options, defaults);
+    this.override(options, defaults);
     
     //If prefix is set to 'none', force blank. A blank string as a parameter
     //evaluates to null for some reason.
@@ -130,3 +130,5 @@ GetSet.setters = function(options)
             })(i);
     }
 };
+
+}
