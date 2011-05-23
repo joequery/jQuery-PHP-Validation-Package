@@ -5,10 +5,6 @@
 //Parameters:
 // id: The jQuery Object representing the form
 // URL: The URL of the server file
-// hasAny: Any form values that will be subject to a hasAny
-//         test should go here. Takes the form
-//         {id, types}
-// hasNone: Same concept as hasAny, but for a hasNone test.
 // invalidClass: The invalid class that will be added to form items
 //               That do not pass form validation.
 // requiredClass:The class associated with required input fields
@@ -29,13 +25,21 @@ function Form(id,options)
     var defaults = {
         id: $(id),
         URL: $(id).attr("action"),
-        hasAny: null,
-	hasNone: null,
         invalidClass: "invalid",
         requiredClass: "required",
-        inputs: $(id).find('input[type="text"], textarea')
     };	settings = jQuery.extend(defaults,options);
     
+	//HasAny and HasNone: Arrays of fields with multiple criteria
+	//for validation
+	settings.hasNone = {};
+	settings.hasAny = {};
+
+	//Array of fields for exact matches
+	settings.is = {};
+
+	//Input fields
+	settings.inputs = {};
+
     //Get setters and methods for the settings object.
 	var gs = new GetSet();
     gs.getters({obj: settings, scope: form, prefix: "none"});
@@ -68,6 +72,53 @@ function Form(id,options)
     {
         forceInvalid = true;
     };
+
+    //=========================================================//
+    //Public rules
+    //Purpose: Allows user to specify exact match rules for fields
+    //Postcondition: Settings.is altered
+    //=========================================================//
+	this.is = function(obj){
+		settings.is = obj;
+	};
+
+	
+    //=========================================================//
+    //Private addHas
+    //Purpose: defines template function for addHasAny/addHasNone 
+    //Postcondition: obj altered
+    //=========================================================//
+	var addHas = function(field, arrstr, obj){
+		/*
+		 * Perpare the array string.
+		 *	Step 1: Remove all spaces
+		 *	Step 2: string => array, delimited by comma
+		 *
+		*/
+		arrstr = arrstr.replace(/\s/g, "");
+		obj[field] = arrstr.split(",");
+		console.log(obj);
+	};
+
+    //=========================================================//
+    //Public addHasAny
+    //Purpose: Allows user to call a field valid if one pattern
+	//		   matches
+    //Postcondition: settings.hasAny altered
+    //=========================================================//
+	this.addHasAny = function(field, arrstr){
+		addHas(field,arrstr, settings.hasAny);
+	};
+
+    //=========================================================//
+    //Public addHasNone
+    //Purpose: Allows user to call a field valid if one pattern
+	//		   matches
+    //Postcondition: settings.hasAny altered
+    //=========================================================//
+	this.addHasNone = function(field, arrstr){
+		addHas(field,arrstr, settings.hasNone);
+	};
     
     //=========================================================//
     //Public Method valid

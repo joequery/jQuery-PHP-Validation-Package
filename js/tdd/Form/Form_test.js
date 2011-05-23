@@ -4,4 +4,11 @@ $(document).ready(function(){
 
 	});
 
+	form.is({
+		name: "alphanum",
+		email: "email",
+		phone: "usphone",
+	});
+
+	form.addHasNone("message", "html, bbcode, mailstrings");
 });
