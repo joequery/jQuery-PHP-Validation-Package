@@ -37,8 +37,9 @@ function Form(id,options)
     };	settings = jQuery.extend(defaults,options);
     
     //Get setters and methods for the settings object.
-    GetSet.getters({obj: settings, scope: form, prefix: "none"});
-    GetSet.setters({obj: settings, scope: form});
+	var gs = new GetSet();
+    gs.getters({obj: settings, scope: form, prefix: "none"});
+    gs.setters({obj: settings, scope: form});
      
     //------------------------------------------------------------
     //Define variables/functions for adding an AJAX string
@@ -228,8 +229,8 @@ function Form(id,options)
         Server.invalidResponse = "invalid";
         Server.errorResponse = "error";
         
-        GetSet.getters({obj: Server, scope:form});
-        GetSet.setters({obj: Server, scope:form});
+        gs.getters({obj: Server, scope:form});
+        gs.setters({obj: Server, scope:form});
 	
         //-----------------------------------------------------------
         // Define Callback object to hold private callback methods 
@@ -283,7 +284,7 @@ function Form(id,options)
         };
         
         //Define mutator methods for Callback. onSuccess, onInvalid
-        GetSet.setters({obj: Callback, scope: form, prefix: "on"});
+        gs.setters({obj: Callback, scope: form, prefix: "on"});
         
     //=========================================================//
     //Public Method mail
