@@ -6,5 +6,5 @@ var woohoo={
 }
 
 gs.getters({scope: window, obj: woohoo});
-$("#main").append(window.getKey());
-$("#main").append(window.getKey2());
+$("#main").append(window.getKey() + "<br />");
+$("#main").append(window.getKey2() + "<br />");
