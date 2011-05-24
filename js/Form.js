@@ -121,7 +121,7 @@ function Form(id,options)
 		 *
 		*/
 		arrstr = arrstr.replace(/\s/g, "");
-		obj[field] = arrstr.split(",");
+		obj[field] = arrstr;
 	};
 
     //=========================================================//
@@ -154,29 +154,15 @@ function Form(id,options)
     //Postcondition: InvalidClass added to input if invalid
     //=========================================================//
     form.valid = function(obj){
-        //Get form attributes
-        var value = $(obj).val();       
-        var name = $(obj).attr('name'); 
-        var valid;
-        
-        //Boolean: If the input is required
-        var isRequired = $(obj).hasClass(settings.requiredClass);
 
-        //If the user has requested the form be forced invalid, return false.
-        if(forceInvalid)
-        {
-            forceInvalid = false;
-            return false;
-        }
-        
         //ZOMG POLYMORPHIC RECURSION
 		//If no object is passed to the valid method, the user wants to validate
 		//the whole form.
-        if(typeof obj === 'undefined')
-        {	    
+		if(typeof obj === 'undefined'){	    
             //Invalid counter
             var invalidCount = 0;	    
             
+			var counter = 0;
             $(settings.inputs).each(function(){
                if(form.invalid($(this)))
                {
@@ -188,9 +174,24 @@ function Form(id,options)
             //to return true
             return !invalidCount;
         }
-        
-        else
-        {   
+
+        else {   
+			//If the user has requested the form be forced invalid, return false.
+			if(forceInvalid)
+			{
+				forceInvalid = false;
+				return false;
+			}
+
+			//Get form attributes
+			var value = $(obj).val();       
+			var name = $(obj).attr('name'); 
+
+			var valid;
+			
+			//Boolean: If the input is required
+			var isRequired = $(obj).hasClass(settings.requiredClass);
+
             //If blank and required, return false. If blank and not required,
             //return true
             if(!value)
@@ -216,15 +217,16 @@ function Form(id,options)
             //Handle specific validation criteria
             if(type === "hasAny")
             {
-                valid = Regex.hasAny(hasAnyTypes, value);
+                valid = Regex.hasAny(name, settings.hasAny[name]);
             }
             else if(type === "hasNone")
             {
-                valid = Regex.hasNone(hasNoneTypes, value);
+                valid = Regex.hasNone(name, settings.hasNone[name]);
             }
             else
             {
-                valid = Regex.is(name, value);
+				console.log("Name: " + name);
+                valid = Regex.is(setting.is[name], value);
             }
             
             return valid;
@@ -239,13 +241,11 @@ function Form(id,options)
     //Return the logical negation of form.validate. Also returns the jq objects
     //That correlate to it.
     form.invalid = function(obj){
-        if(typeof obj === 'undefined')
-        {
+        if(typeof obj === 'undefined'){
             //Will hold the jquery object with the invalid items
             var invalidObj = $();
             $(settings.inputs).each(function(){
-                if( form.invalid($(this)) )
-                {
+                if( form.invalid($(this)) ){
                     invalidObj = $(invalidObj).add($(this));	    
                 }
             });	    
