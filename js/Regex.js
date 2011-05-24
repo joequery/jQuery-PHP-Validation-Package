@@ -23,8 +23,9 @@ Regex.pattern = function(){
     usphone: "(1\\s*[-\\/\\.]?)?(\\((\\d{3})\\)|(\\d{3}))\\s*[-\\/\\.]?\\s*(\\d{3})\\s*[-\\/\\.]?\\s*(\\d{4})\\s*(([xX]|[eE][xX][tT])[-.:]?\\s*(\\d+))*",
     usaddress: "\\d+\\s[-\\w.,\\s#:]+",
     fullname: "[a-zA-Z]+\\s+([-a-zA-Z.'\\s]|[0-9](nd|rd|th))+",
-    name: "[-a-zA-Z.'\\s]+",
-    lastname: "([-a-zA-Z.'\\s]|[0-9](nd|rd|th))+"
+    name: "[-a-zA-Z0-9.'\\s]+",
+    lastname: "([-a-zA-Z.'\\s]|[0-9](nd|rd|th))+",
+	alphanum: "[a-zA-Z0-9]+"
     };
 };
 
@@ -45,7 +46,8 @@ Regex.example = function() {
     int: "111",
     float: "111.50",
     mailstrings: "to:bcc:",
-    message: "No HTML or BB Code."
+    message: "No HTML or BB Code.",
+	alphanum: "Number123"
     };
 };
 

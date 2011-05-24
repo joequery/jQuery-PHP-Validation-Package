@@ -29,7 +29,7 @@
 		<input class="required" type="text" id="email" name="email" />
 
 		<label for="phone">Phone</label>
-		<input class="required" type="text" id="phone" name="phone" />
+		<input class="" type="text" id="phone" name="phone" />
 
 		<label for="message">Message</label>
 		<textarea class="required" rows=10 cols=5 name="message"></textarea>

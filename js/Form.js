@@ -9,8 +9,7 @@
 //               That do not pass form validation.
 // requiredClass:The class associated with required input fields
 /************************************************************/
-function Form(id,options)
-{
+function Form(id,options){
     //------------------------------------------------------------
     // Set default property values
     //------------------------------------------------------------
@@ -217,16 +216,15 @@ function Form(id,options)
             //Handle specific validation criteria
             if(type === "hasAny")
             {
-                valid = Regex.hasAny(name, settings.hasAny[name]);
+                valid = Regex.hasAny(settings.hasAny[name], value);
             }
             else if(type === "hasNone")
             {
-                valid = Regex.hasNone(name, settings.hasNone[name]);
+                valid = Regex.hasNone(settings.hasNone[name], value);
             }
             else
             {
-				console.log("Name: " + name);
-                valid = Regex.is(setting.is[name], value);
+                valid = Regex.is(settings.is[name], value);
             }
             
             return valid;
@@ -269,6 +267,7 @@ function Form(id,options)
                     .removeAttr('selected')
                     .removeClass(settings.invalidClass);
         jQuery(settings.id).find('textarea').val('');                                
+		jQuery(settings.invalidClass).removeClass(settings.invalidClass);
     };    
 
         //------------------------------------------------------------
