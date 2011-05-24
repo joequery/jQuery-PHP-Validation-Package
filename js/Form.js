@@ -15,9 +15,6 @@ function Form(id,options)
     // Set default property values
     //------------------------------------------------------------
     
-    //Get default form
-    id = (typeof id === 'undefined') ? $("form") : id;
-    
     //Store a relatively global scope for convenience
     var form = this;
     
@@ -29,6 +26,11 @@ function Form(id,options)
         requiredClass: "required",
     };	settings = jQuery.extend(defaults,options);
     
+	//Prevent default form behavior
+	$(settings.id).submit(function(e){
+		e.preventDefault();
+	});
+	
 	//HasAny and HasNone: Arrays of fields with multiple criteria
 	//for validation
 	settings.hasNone = {};
@@ -39,6 +41,9 @@ function Form(id,options)
 
 	//Input fields
 	settings.inputs = {};
+
+	//Maps the input names to their type (is, hasAny, hasNone)
+	settings.types = {};
 
     //Get setters and methods for the settings object.
 	var gs = new GetSet();
@@ -55,8 +60,7 @@ function Form(id,options)
     //Purpose: Concatenates a serialized post variable AJAX
     //Postcondition: var addAjax is set to true
     //=========================================================//
-    form.addAJAX = function()
-    {
+    form.addAJAX = function(){
         addAJAX = true;
     };
     
@@ -68,10 +72,26 @@ function Form(id,options)
     //Purpose: Allows user to force the form into an invalid state
     //Postcondition: forceInvalid altered
     //=========================================================//
-    this.forceInvalid = function()
-    {
+    this.forceInvalid = function(){
         forceInvalid = true;
     };
+
+    //=========================================================//
+    //Private map_input
+    //Purpose: maps input and adds to settings object
+    //Postcondition: Settings.is altered
+    //=========================================================//
+	var map_input = function(name, type){
+		settings.types[name] = type;
+
+		//If inputs is empty, just make it the current field jqobject
+		if(jQuery.isEmptyObject(settings.inputs)){
+			settings.inputs = $("*[name='" +name+ "']");
+		}
+		else{
+			settings.inputs = $(settings.inputs).add($("*[name='" +name+ "']"));
+		}
+	};
 
     //=========================================================//
     //Public rules
@@ -80,6 +100,11 @@ function Form(id,options)
     //=========================================================//
 	this.is = function(obj){
 		settings.is = obj;
+
+		//Add each field key to the types object, of type "is"
+		for (var i in obj){
+			map_input(i, "is");
+		}
 	};
 
 	
@@ -97,7 +122,6 @@ function Form(id,options)
 		*/
 		arrstr = arrstr.replace(/\s/g, "");
 		obj[field] = arrstr.split(",");
-		console.log(obj);
 	};
 
     //=========================================================//
@@ -108,6 +132,7 @@ function Form(id,options)
     //=========================================================//
 	this.addHasAny = function(field, arrstr){
 		addHas(field,arrstr, settings.hasAny);
+		map_input(field, "hasAny");
 	};
 
     //=========================================================//
@@ -118,6 +143,7 @@ function Form(id,options)
     //=========================================================//
 	this.addHasNone = function(field, arrstr){
 		addHas(field,arrstr, settings.hasNone);
+		map_input(field, "hasNone");
 	};
     
     //=========================================================//
@@ -127,8 +153,7 @@ function Form(id,options)
     //  obj: The jQuery object of the item being tested
     //Postcondition: InvalidClass added to input if invalid
     //=========================================================//
-    form.valid = function(obj)
-    {
+    form.valid = function(obj){
         //Get form attributes
         var value = $(obj).val();       
         var name = $(obj).attr('name'); 
@@ -136,7 +161,7 @@ function Form(id,options)
         
         //Boolean: If the input is required
         var isRequired = $(obj).hasClass(settings.requiredClass);
-        
+
         //If the user has requested the form be forced invalid, return false.
         if(forceInvalid)
         {
@@ -144,14 +169,15 @@ function Form(id,options)
             return false;
         }
         
-        //ZOMG RECURSIVE POLYMORPHISM!
+        //ZOMG POLYMORPHIC RECURSION
+		//If no object is passed to the valid method, the user wants to validate
+		//the whole form.
         if(typeof obj === 'undefined')
         {	    
             //Invalid counter
             var invalidCount = 0;	    
             
-            $(settings.inputs).each(function()	       
-            {
+            $(settings.inputs).each(function(){
                if(form.invalid($(this)))
                {
                     invalidCount++;
@@ -180,43 +206,19 @@ function Form(id,options)
             }
             
             //------------------------------------------------------------
-            //If the value is not blank, proceed with these processes
+            // If the value is not blank, proceed with these processes
+			// Here we actually validate based on types
             //------------------------------------------------------------
-            
-            //Check to see if this item is included in the "HasAny" pseudo-array
-            var hasAnyTypes = false;
-            if(isset(settings.hasAny))
-            {	
-                for(var i=0; i<settings.hasAny.length; i++)
-                {
-                    if($(obj).equalTo($(settings.hasAny[i].id)))
-                    {
-                        //store the types
-                        hasAnyTypes = settings.hasAny[i].types;
-                    }            
-                }
-            }
-            
-            //Repeat the process for the HasNone psuedo-array
-            var hasNoneTypes = false;
-            if(isset(settings.hasNone))
-            {
-                for(var i=0; i<settings.hasNone.length; i++)
-                {
-                    if($(obj).equalTo($(settings.hasNone[i].id)))
-                    {
-                        //store the types
-                        hasNoneTypes = settings.hasNone[i].types;
-                    }            
-                }
-            }	
-            
+
+			//Get type of validation (is, hasAny, hasNone);
+			var type = settings.types[name];
+
             //Handle specific validation criteria
-            if(hasAnyTypes)
+            if(type === "hasAny")
             {
                 valid = Regex.hasAny(hasAnyTypes, value);
             }
-            else if(hasNoneTypes)
+            else if(type === "hasNone")
             {
                 valid = Regex.hasNone(hasNoneTypes, value);
             }
@@ -236,14 +238,12 @@ function Form(id,options)
     
     //Return the logical negation of form.validate. Also returns the jq objects
     //That correlate to it.
-    form.invalid = function(obj)
-    {
+    form.invalid = function(obj){
         if(typeof obj === 'undefined')
         {
             //Will hold the jquery object with the invalid items
             var invalidObj = $();
-            $(settings.inputs).each(function()
-            {
+            $(settings.inputs).each(function(){
                 if( form.invalid($(this)) )
                 {
                     invalidObj = $(invalidObj).add($(this));	    
@@ -262,8 +262,7 @@ function Form(id,options)
     //Purpose: Clears the form of all input values
     //Postcondition: Form is cleared
     //=========================================================//
-    form.clear = function()
-    {
+    form.clear = function(){
         jQuery(settings.id).find(':input')
                     .not(':button, :submit, :reset, :hidden')
                     .val('').removeAttr('checked')
@@ -288,36 +287,30 @@ function Form(id,options)
         //-----------------------------------------------------------
         var Callback = {};
 	
-        Callback.success = function()
-        {
+        Callback.success = function(){
             $("#confirmation").html("<h4>Your message was sent successfully.</h4>");
             form.clear();
         };
         
-        Callback.serverInvalid = function()
-        {
+        Callback.serverInvalid = function(){
             $("#confirmation").html("<h4>Message not sent. Please verify your information.</h4>");            
         };
         
-        Callback.clientInvalid = function(invalid)
-        {
+        Callback.clientInvalid = function(invalid){
             $("#confirmation").html("<h4>Please verify your information.</h4>");
             $(invalid).addClass(settings.invalidClass);
         };
         
-        Callback.error = function(response)
-        {
+        Callback.error = function(response){
             $("#confirmation").html("<h4>Server Error. Please try again.</h4>");            
         };
         
-        Callback.send = function()
-        {
+        Callback.send = function(){
            $("#confirmation").html("<h4>Sending...</h4>"); 
         };
         
         //Function that decides which callback to execute based on server response.
-        Callback.doCallback = function(response)
-        {
+        Callback.doCallback = function(response){
             if(response == Server.successResponse)
             {
                 Callback.success();
@@ -342,10 +335,8 @@ function Form(id,options)
     //Purpose: Attempt to send mail and get response from server
     //Postcondition: Calls Callback.doCallback
     //=========================================================//
-    form.mail = function()
-    {	
-        var post = new POST(settings.URL, function(response)
-        {
+    form.mail = function(){	
+        var post = new POST(settings.URL, function(response){
             Callback.doCallback(response);
         });
         
@@ -368,14 +359,11 @@ function Form(id,options)
     //Postcondition: Invalid class added or form is mailed with
     //               the appropriate callback message.
     //=========================================================//
-    form.quickform = function()
-    {
-        $(settings.id).submit(function()
-        {
+    form.quickform = function(){
+        $(settings.id).submit(function(){
             //If the form is valid, mail it. If not, add the
             //invalid class to all invalid items.
-            if(form.valid())
-            {
+            if(form.valid()){
                 Callback.send();
                 
                 //Add an AJAX post variable
@@ -384,12 +372,10 @@ function Form(id,options)
                 //Display a sending indicator
                 form.mail();
             }
-            else
-            {
+
+            else{
                 Callback.clientInvalid($(form.invalid()));
             }
-            
-            return false; //Override default form behavior
         });
     };
 }
