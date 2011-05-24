@@ -28,28 +28,6 @@ Regex.pattern = function(){
     };
 };
 
-//Define the descriptions as they will appear in emails or response text
-Regex.description = function() {    
-    return {
-    int: "Integer",
-    float: "Float",
-    mailstrings: "Mail Strings",
-    email: "Email",
-    html: "HTML",
-    url: "URL",
-    zip: "Zip Code",
-    alpha: "Alphabetic Character",
-    num: "Number",
-    bbcode: "BB Code",
-    usphone: "Phone",
-    usaddress: "Address",
-    name: "Name",
-    fullname: "Name",
-    lastname: "Last Name",
-    message: "Message"
-    };
-};
-
 Regex.example = function() {
     return {
     name: "John Doe",
@@ -141,14 +119,6 @@ Regex.hasAny = function(types, val)
     {
         return !Regex.hasAny(types,val);
     };
-//Get the text description of a validation type
-Regex.getDescription = function(type)
-{
-    //Make sure the type is formatted properly. Return the description.
-    type = Regex.getType(type);
-    
-    return Regex.description()[type];
-};
 
 //Get the text example of a validation type
 Regex.getExample = function(type)
