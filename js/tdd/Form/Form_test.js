@@ -8,8 +8,8 @@ $(document).ready(function(){
 	});
 
 	form.addHasNone("message", "html, bbcode, mailstrings");
-	form.quickform();
 
+	//Custom form behavior
 	form.onClientInvalid(function(response){
 		$(form.invalid()).addClass(form.invalidClass());
 		$(form.invalid()).prev().addClass(form.invalidClass());

@@ -304,7 +304,7 @@ function Form(id,options){
             $("#confirmation").html("<h4>Server Error. Please try again.</h4>");            
         };
         
-        Callback.send = function(){
+        Callback.submit = function(){
            $("#confirmation").html("<h4>Sending...</h4>"); 
         };
         
@@ -351,30 +351,28 @@ function Form(id,options){
         post.getResponse();
     };
     
-    //=========================================================//
-    //Public Method quickform
-    //Purpose: Provide an easy form send for lazy designers that
-    //         probably shouldn't be using jQuery. :P #owned
-    //Postcondition: Invalid class added or form is mailed with
-    //               the appropriate callback message.
-    //=========================================================//
-    form.quickform = function(){
-        $(settings.id).submit(function(){
-            //If the form is valid, mail it. If not, add the
-            //invalid class to all invalid items.
-            if(form.valid()){
-                Callback.send();
-                
-                //Add an AJAX post variable
-                form.addAJAX();
-                
-                //Display a sending indicator
-                form.mail();
-            }
+	/* 
+	 * When the user submits the form, fire the callbacks. clientInvalid
+	 * callback is fired if form does not validate, and the submit callback
+	 * is fired if the form does validate. Add a variable named AJAX to the
+	 * post array to process on the server, and send the mail!
+	 */
 
-            else{
-                Callback.clientInvalid($(form.invalid()));
-            }
-        });
-    };
+	$(settings.id).submit(function(){
+		//If the form is valid, mail it. If not, add the
+		//invalid class to all invalid items.
+		if(form.valid()){
+			Callback.submit();
+			
+			//Add an AJAX post variable
+			form.addAJAX();
+			
+			//Display a sending indicator
+			form.mail();
+		}
+
+		else{
+			Callback.clientInvalid($(form.invalid()));
+		}
+	});
 }
