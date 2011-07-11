@@ -9,8 +9,7 @@
 </head>
 
 <body>
-	<div id="main">Testing GetSet<br /></div>
+	<div id="main"><h1>Testing GetSet</h1><br /></div>
 </body>
-
 
 </html>
