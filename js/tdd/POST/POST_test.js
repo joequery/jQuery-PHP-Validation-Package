@@ -1,7 +1,7 @@
 $(document).ready(function(){
 var main = $("#main");
 
-//Instantiate post
+//Instantiate post object
 var post = new POST("ajax.php");
 
 //Define the callback. Append the response to main div
