@@ -1,9 +1,6 @@
 /************************************************************/
 //Class Regex
-//Purpose: Static entity for evaluating common regex patterns.
-//
-//Note the use of anonymous functions around the pattern and
-//descrption properties to keep them private.
+//Purpose: Easily evaluate common Regular Expression patterns
 /************************************************************/
 var Regex = {}; //Object instead of function for static effect
 
@@ -26,28 +23,6 @@ Regex.pattern = function(){
     name: "[-a-zA-Z0-9.'\\s]+",
     lastname: "([-a-zA-Z.'\\s]|[0-9](nd|rd|th))+",
 	alphanum: "[a-zA-Z0-9]+"
-    };
-};
-
-Regex.example = function() {
-    return {
-    name: "John Doe",
-    usphone: "903-555-5555",
-    email: "myemail@gmail.com",
-    html: "<b>HTML</b>",
-    url: "www.vertstudios.com",
-    zip: "75701",
-    alpha: "abcdefg",
-    num: "99095",
-    bbcode: "[B]BBCODE[/B]",
-    usaddress: "1800 East Barbara Street",
-    fullname: "John Doe",
-    lastname: "Doe 2nd",
-    int: "111",
-    float: "111.50",
-    mailstrings: "to:bcc:",
-    message: "No HTML or BB Code.",
-	alphanum: "Number123"
     };
 };
 
@@ -122,14 +97,6 @@ Regex.hasAny = function(types, val)
         return !Regex.hasAny(types,val);
     };
 
-//Get the text example of a validation type
-Regex.getExample = function(type)
-{
-    //Make sure the type is formatted properly. Return the description.
-    type = Regex.getType(type);
-    
-    return Regex.example()[type];
-};
         
 //Transforms a comma delimited string into an array
 Regex.getArray = function(str)
