@@ -46,8 +46,7 @@ Regex.getType = function(str)
 Regex.is = function(type, val)
 {
     //Make sure the type is formatted properly
-    var type = Regex.getType(type);		
-    var pattern = Regex.pattern()[type];
+    var pattern = Regex.pattern()[Regex.getType(type)];
     
     //Create regular expression object
     var re = new RegExp("^" + pattern + "$");
@@ -66,8 +65,7 @@ Regex.is = function(type, val)
 Regex.has = function(type, val)
 {
     //Make sure the type is formatted properly
-    var type = Regex.getType(type);		
-    var pattern = Regex.pattern()[type];
+    var pattern = Regex.pattern()[Regex.getType(type)];
     
     //Create regular expression object
     var re = new RegExp(pattern);
