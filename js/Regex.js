@@ -26,13 +26,28 @@ Regex.pattern = function(){
     };
 };
 
+//Transforms a comma delimited string into an array
+Regex.getArray = function(str)
+{
+    //Get rid of blank spaces
+    var str = str.replace(" ", "");
+    
+    return str.split(",");		
+};
+        
+//Get the type from a string that may contain integers, or may not be
+//lowercase.
+Regex.getType = function(str)
+{
+    return str.toLowerCase().replace(/[^a-z]+/,"");    
+};
+
 //Returns the match result for an exact match
 Regex.is = function(type, val)
 {
     //Make sure the type is formatted properly
-    type = Regex.getType(type);		
-    
-    pattern = Regex.pattern()[type];
+    var type = Regex.getType(type);		
+    var pattern = Regex.pattern()[type];
     
     //Create regular expression object
     var re = new RegExp("^" + pattern + "$");
@@ -51,9 +66,8 @@ Regex.is = function(type, val)
 Regex.has = function(type, val)
 {
     //Make sure the type is formatted properly
-    type = Regex.getType(type);		
-    
-    pattern = Regex.pattern()[type];
+    var type = Regex.getType(type);		
+    var pattern = Regex.pattern()[type];
     
     //Create regular expression object
     var re = new RegExp(pattern);
@@ -71,7 +85,7 @@ Regex.has = function(type, val)
 Regex.hasAny = function(types, val)
 {
     //Parse the string passed in for types
-    types = Regex.getArray(types);
+    var types = Regex.getArray(types);
     
     //Assume none are found
     var flag = false; 
@@ -79,7 +93,7 @@ Regex.hasAny = function(types, val)
     for(var i=0; i<types.length; i++)
     {		
             //Make sure the type is formatted properly
-            type = Regex.getType(types[i]);
+            var type = Regex.getType(types[i]);
             
             
             if(Regex.has(type,val))
@@ -97,19 +111,3 @@ Regex.hasAny = function(types, val)
         return !Regex.hasAny(types,val);
     };
 
-        
-//Transforms a comma delimited string into an array
-Regex.getArray = function(str)
-{
-    //Get rid of blank spaces
-    str = str.replace(" ", "");
-    
-    return str.split(",");		
-};
-
-//Get the type from a string that may contain integers, or may not be
-//lowercase.
-Regex.getType = function(str)
-{
-    return str.toLowerCase().replace(/[^a-z]+/,"");    
-};
