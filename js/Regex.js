@@ -26,6 +26,9 @@ Regex.pattern = function(){
     };
 };
 
+//Define default mods
+Regex.mods = "";
+
 //Transforms a comma delimited string into an array
 Regex.getArray = function(str)
 {
@@ -43,13 +46,16 @@ Regex.getType = function(str)
 };
 
 //Returns the match result for an exact match
-Regex.is = function(type, val)
+Regex.is = function(type, val, mods)
 {
+	//Check for mods
+	mods = mods || Regex.mods
+
     //Make sure the type is formatted properly
     var pattern = Regex.pattern()[Regex.getType(type)];
     
     //Create regular expression object
-    var re = new RegExp("^" + pattern + "$");
+    var re = new RegExp("^" + pattern + "$", mods);
     
     return re.test(val);
         
@@ -64,11 +70,14 @@ Regex.is = function(type, val)
 //Returns the match result for a match contained anywhere in the string
 Regex.has = function(type, val)
 {
+	//Check for mods
+	mods = mods || Regex.mods
+
     //Make sure the type is formatted properly
     var pattern = Regex.pattern()[Regex.getType(type)];
     
     //Create regular expression object
-    var re = new RegExp(pattern);
+    var re = new RegExp(pattern, mods);
     
     return re.test(val);        
 };
@@ -109,3 +118,5 @@ Regex.hasAny = function(types, val)
         return !Regex.hasAny(types,val);
     };
 
+// For local node.js testing
+exports.Regex = Regex;
