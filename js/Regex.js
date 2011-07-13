@@ -30,8 +30,7 @@ Regex.pattern = function(){
 Regex.mods = "";
 
 //Transforms a comma delimited string into an array
-Regex.getArray = function(str)
-{
+Regex.getArray = function(str){
     //Get rid of blank spaces
     var str = str.replace(" ", "");
     
@@ -40,14 +39,12 @@ Regex.getArray = function(str)
         
 //Get the type from a string that may contain integers, or may not be
 //lowercase.
-Regex.getType = function(str)
-{
+Regex.getType = function(str){
     return str.toLowerCase().replace(/[^a-z]+/,"");    
 };
 
 //Returns the match result for an exact match
-Regex.is = function(type, val, mods)
-{
+Regex.is = function(type, val, mods){
 	//Check for mods
 	mods = mods || Regex.mods
 
@@ -62,14 +59,15 @@ Regex.is = function(type, val, mods)
 };
 
     //Returns the logical negation of Regex.is
-    Regex.isNot = function(type,val)
-    {
-        return !Regex.is(type,val);
+    Regex.isNot = function(type,val, mods){
+		//Check for mods
+		mods = mods || Regex.mods
+
+        return !Regex.is(type,val, mods);
     };
 
 //Returns the match result for a match contained anywhere in the string
-Regex.has = function(type, val)
-{
+Regex.has = function(type, val, mods){
 	//Check for mods
 	mods = mods || Regex.mods
 
@@ -83,40 +81,60 @@ Regex.has = function(type, val)
 };
 
     //Returns the logical negation of Regex.has
-    Regex.hasNot = function(type,val)
-    {
-        return !Regex.has(type,val);
+    Regex.hasNot = function(type,val, mods){
+		//Check for mods
+		mods = mods || Regex.mods
+
+        return !Regex.has(type,val, mods);
     };
 
 //Returns the match result for match options contained anywhere in the string
-Regex.hasAny = function(types, val)
-{
+Regex.hasAny = function(types, val, mods){
+	
+	//Check for mods
+	mods = mods || Regex.mods
+	
     //Parse the string passed in for types
     var types = Regex.getArray(types);
     
     //Assume none are found
     var flag = false; 
     
-    for(var i=0; i<types.length; i++)
-    {		
-            //Make sure the type is formatted properly
-            var type = Regex.getType(types[i]);
-            
-            
-            if(Regex.has(type,val))
-            {
-                    flag = true;
-            }		
+    for(var i=0; i<types.length; i++){		
+		//Make sure the type is formatted properly
+		var type = Regex.getType(types[i]);
+		
+		if(Regex.has(type,val, mods)){
+				flag = true;
+		}		
     }
     
     return flag;
 };
 
     //Returns the logical negation of Regex.hasAny
-    Regex.hasNone = function(types, val)
-    {
-        return !Regex.hasAny(types,val);
+    Regex.hasNone = function(types, val, mods){
+        return !Regex.hasAny(types,val, mods);
     };
 
-// For local node.js testing
-exports.Regex = Regex;
+Regex.nosubstr = function(flagArr, val){
+	var flags = Regex.getArray(flagArr);
+	
+	// Flag: If none of the substrings are in the value.
+	var nosubstr = true;
+
+	for(var i=0; i<flags.length; i++){
+		if(val.toLowerCase().search(flags[i].toLowerCase()) !== -1){
+			nosubstr = false;
+			break;
+		}
+	}
+
+	return nosubstr;
+};
+
+//Export to node for local testing
+if (typeof(window) === "undefined"){
+	exports.Regex = Regex;
+}
+
