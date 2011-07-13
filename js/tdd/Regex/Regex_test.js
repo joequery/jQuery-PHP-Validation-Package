@@ -1,6 +1,5 @@
-// Test Regex.JS
-var Regex = require('../../Regex.js');
-console.log(Regex);
-//var email = "joseph@vertstudios.com";
+if(typeof(window) === "undefined"){
+	// Test Regex.JS
+	var Regex = require('../../Regex.js');
+}
 
-//console.log(Regex.is("email", email));
