@@ -19,34 +19,39 @@ $mailer->setFrom("noreply@vertstudios.com");
 $mailer->setSubject("Crowded6 Contact Form");
 $ajax = $mailer->hasAJAX();
 
+//Make names to nice looking versions
+$nameMap = array(
+	"name" => "Name",
+	"phone" => "Phone",
+	"email" => "Email",
+	"message" => "Message"
+);
+
 $mailer->setRequired("all");
 
 //Message cannot contain html,bbcode, or mailstrings
-$mailer->addHasNone("message", "html,bbcode,mailstrings", "Message");
+$mailer->hasNone(array(
+	"message" => "html,bbcode,mailstrings"	
+));
     
 //Set order
-$mailer->setOrder( array("name", "usphone", "email", "message") );
+$mailer->setOrder("name,usphone,email,message");
 
-if($mailer->valid())
-{
-    $mailer->appendAll();
-	if($mailer->send())
-	{
+if($mailer->valid()){
+    $mailer->appendAll($nameMap);
+	if($mailer->send())	{
 		$status = "thanks";
 	}
-	else
-	{
+	else{
 		$status = "error";
 	}
 }
 
 //If request was made via AJAX, echo back. If not, redirect.
-if($ajax)
-{
+if($ajax){
 	echo $status;
 }
-else
-{
+else{
 	$_SESSION["POST"] = $_POST;
 	header("Location: " . ROOTDIR . "contact?status=" . $status);
 }
