@@ -59,7 +59,7 @@ function Form(id,options){
     //Purpose: Concatenates a serialized post variable AJAX
     //Postcondition: var addAjax is set to true
     //=========================================================//
-    form.addAJAX = function(){
+    this.addAJAX = function(){
         addAJAX = true;
     };
     
@@ -78,7 +78,6 @@ function Form(id,options){
     //=========================================================//
     //Private map_input
     //Purpose: maps input and adds to settings object
-    //Postcondition: Settings.is altered
     //=========================================================//
 	var map_input = function(name, type){
 		settings.types[name] = type;
