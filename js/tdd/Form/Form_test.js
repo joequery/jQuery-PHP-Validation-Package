@@ -17,8 +17,7 @@ $(document).ready(function(){
 		$(form.invalid()).prev().addClass(form.invalidClass());
 	});
 
-	form.onSuccess(function()
-	{
+	form.onSuccess(function(){
 		form.clear();
 		$("#contact textarea").val("Your message has been sent. Thank you.");		
 		//$(form.invalidClass()).remove(form.invalidClass());
@@ -26,28 +25,22 @@ $(document).ready(function(){
 
 
 	//Check for invalid on focusout
-	$(form.inputs()).focusout(function()
-	{
+	$(form.inputs()).focusout(function(){
 		//If empty and required or invalid, add invalid class
-		if( form.invalid($(this)) || (!$(this).val() && $(this).hasClass(form.requiredClass())) )
-		{
+		if( form.invalid($(this)) || (!$(this).val() && $(this).hasClass(form.requiredClass())) ){
 			$(this).addClass(form.invalidClass());
 			$(this).prev().addClass(form.invalidClass());
 		}
-		else
-		{
+		else{
 			$(this).removeClass(form.invalidClass());
 			$(this).parents("dd").prev().children().removeClass(form.invalidClass());
 		}
 	});
 		
 	//If is currently invalid, check for correction each keystroke
-	$(form.inputs()).keyup(function()
-	{
-		if( $(this).hasClass(form.invalidClass()) )
-		{	
-			if(form.valid($(this)))
-			{
+	$(form.inputs()).keyup(function(){
+		if( $(this).hasClass(form.invalidClass()) ){	
+			if(form.valid($(this))){
 				$(this).removeClass(form.invalidClass());
 				$(this).prev().removeClass(form.invalidClass());
 			}
