@@ -4,10 +4,12 @@ $(document).ready(function(){
 	form.is({
 		 name: "name",
 		email: "email",
-		phone: "usphone",
+		phone: "usphone"
 	});
 
-	form.addHasNone("message", "html, bbcode, mailstrings");
+	form.hasNone({
+		"message": "html, bbcode, mailstrings, int"
+	});
 
 	//Custom form behavior
 	form.onClientInvalid(function(response){

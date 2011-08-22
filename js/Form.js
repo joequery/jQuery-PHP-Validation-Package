@@ -92,9 +92,8 @@ function Form(id,options){
 	};
 
     //=========================================================//
-    //Public rules
+    //Public is
     //Purpose: Allows user to specify exact match rules for fields
-    //Postcondition: Settings.is altered
     //=========================================================//
 	this.is = function(obj){
 		settings.is = obj;
@@ -102,6 +101,35 @@ function Form(id,options){
 		//Add each field key to the types object, of type "is"
 		for (var i in obj){
 			map_input(i, "is");
+		}
+	};
+
+    //=========================================================//
+    //Public hasAny
+    //Purpose: Allows user to specify rules for fields - exact
+	// match not required
+    //=========================================================//
+	this.hasAny = function(obj){
+		settings.hasAny = obj;
+
+		//Add each field key to the types object, of type "is"
+		for (var i in obj){
+			addHas(i,obj[i], settings.hasAny);
+			map_input(i, "hasAny");
+		}
+	};
+
+    //=========================================================//
+    //Public hasNone
+    //Purpose: Allows user to specify what patterns can NOT match
+    //=========================================================//
+	this.hasNone = function(obj){
+		settings.hasNone = obj;
+
+		//Add each field key to the types object, of type "is"
+		for (var i in obj){
+			addHas(i,obj[i], settings.hasNone);
+			map_input(i, "hasNone");
 		}
 	};
 
@@ -123,23 +151,23 @@ function Form(id,options){
 	};
 
     //=========================================================//
-    //Public addHasAny
+    //Private addHasAny
     //Purpose: Allows user to call a field valid if one pattern
 	//		   matches
     //Postcondition: settings.hasAny altered
     //=========================================================//
-	this.addHasAny = function(field, arrstr){
+	var addHasAny = function(field, arrstr){
 		addHas(field,arrstr, settings.hasAny);
 		map_input(field, "hasAny");
 	};
 
     //=========================================================//
-    //Public addHasNone
+    //Private addHasNone
     //Purpose: Allows user to call a field valid if one pattern
 	//		   matches
     //Postcondition: settings.hasAny altered
     //=========================================================//
-	this.addHasNone = function(field, arrstr){
+	var addHasNone = function(field, arrstr){
 		addHas(field,arrstr, settings.hasNone);
 		map_input(field, "hasNone");
 	};
