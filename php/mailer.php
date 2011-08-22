@@ -27,11 +27,11 @@ $nameMap = array(
 	"message" => "Message"
 );
 
-$mailer->setRequired("all");
+$mailer->setRequired("name, email, message");
 
 //Message cannot contain html,bbcode, or mailstrings
 $mailer->hasNone(array(
-	"message" => "html,bbcode,mailstrings"	
+	"message" => "html, bbcode, mailstrings"	
 ));
     
 //Set order
