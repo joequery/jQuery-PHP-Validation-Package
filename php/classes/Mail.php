@@ -68,8 +68,8 @@ class Mail
 	{
 		$this->from = $str;
 
-		//Construct headers
-		$this->headers = 'From:' . $this->from . "\r\n" . 'X-Mailer: PHP/' . phpversion();
+		//Construct initial headers
+		$this->headers = 'From:' . $this->from . "\r\n" . 'X-Mailer: PHP/' . phpversion() . "\r\n";
 	}
 	
 	//Create a mutator method for required
