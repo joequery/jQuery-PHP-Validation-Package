@@ -6,8 +6,7 @@ date_default_timezone_set('America/Chicago');
 // Author: Joseph McCullough (@joe_query) 
 // Last Updated: Dec 03, 2010
 //------------------------------------------------------------
-class Mail
-{
+class Mail{
 	private $body;    //Email body
 	private $headers; //Email headers
 	private $to;      //Those who will receive the email
@@ -25,8 +24,7 @@ class Mail
 	//Constructor
 	//$to: Who the email will be sent to
 	//$arr: Array containing the POST values
-	public function Mail($to, $arr)
-	{		
+	public function Mail($to, $arr){		
 		//Unset the "submit" key that will be sent if <input type="submit 
 		//is used in the contact form.
 		if( isset($arr["submit"]) ){
@@ -54,8 +52,7 @@ class Mail
 	//------------------------------------------------------------
 	
 	//Returns the email body
-	public function getBody()
-	{
+	public function getBody(){
 		return $this->body;
 	}
 	
@@ -64,8 +61,7 @@ class Mail
 	//------------------------------------------------------------
 	
 	//Set what email address the email appears to be from
-	public function setFrom($str)
-	{
+	public function setFrom($str){
 		$this->from = $str;
 
 		//Construct initial headers
@@ -74,14 +70,11 @@ class Mail
 	
 	//Create a mutator method for required
 	//$str: comma delimited string
-	public function setRequired($str)
-	{
+	public function setRequired($str){
 		//Define a special keyword "all" to make all fields required
-		if(strtolower($str) == "all")
-		{
+		if(strtolower($str) == "all"){
 			$newstr = "";
-			foreach($this->postArr as $field => $value)
-			{
+			foreach($this->postArr as $field => $value){
 				$newstr .= $field . ",";
 			}
 			//Trim trailing comma
@@ -89,39 +82,33 @@ class Mail
 			
 			$this->required = Regex::getArray($newstr);	
 		}
-		else
-		{
+		else{
 			$this->required = Regex::getArray($str);	
 		}	
 	}
 		
 	//Allow specified order of appendage
-	public function setOrder($arr)
-	{
+	public function setOrder($arr){
 		$this->appendOrder = $arr;
 	}
 
 	//Create a mutator method for the subject
-	public function setSubject($str)
-	{
+	public function setSubject($str){
 		$this->subject = $str;
 	}
 
-	public function setDesc($arr)
-	{
+	public function setDesc($arr){
 		$this->customDescriptions = $arr;
 	}
 	
-	public function addHasAny($field, $types, $description)
-	{		
+	private function addHasAny($field, $types, $description){		
 		$this->hasAny[] = array("field" => $field,
 					"types" => $types,
 					"description" => $description,
 					"value" => $this->postArr[$field]);
 	}
 	
-	public function addHasNone($field, $types, $description)
-	{	
+	private function addHasNone($field, $types, $description){	
 		$this->hasNone[] = array("field" => $field,
 					"types" => $types,
 					"description" => $description,
@@ -134,16 +121,13 @@ class Mail
 	
 	//See if an AJAX value was specifed in an arrray. If yes, return
 	//true and unset. If not, return false
-	public function hasAJAX()
-	{
+	public function hasAJAX(){
 		//Flag for if an ajax field is found in the array
 		$hasAJAX = false;
 		
 		//Look through fields for ajax
-		foreach($this->postArr as $field => $value)
-		{
-			if( strtolower($field) == "ajax" )
-			{
+		foreach($this->postArr as $field => $value){
+			if( strtolower($field) == "ajax" ){
 				$hasAJAX = true;
 				unset($this->postArr[$field]);
 				break;
@@ -156,19 +140,16 @@ class Mail
 	
 	//Validate all the fields in the array after hasAny and hasNone
 	//have been set and removed
-	public function validateIs()
-	{
+	public function validateIs(){
 		//Convenience variable
 		$arr = $this->postArr;	
 		
 		//Boolean flag representing validity
 		$valid = true;
 		
-		foreach($arr as $field => $value)
-		{
+		foreach($arr as $field => $value){
 			
-			if(!(Regex::is($field,$value)) && (!empty($value) && !in_array($field, $this->required ) ))
-			{
+			if(!(Regex::is($field,$value)) && (!empty($value) && !in_array($field, $this->required ) )){
 				$valid = false;
 				break;
 			}
@@ -177,8 +158,7 @@ class Mail
 	}
 	
 	//Validate the hasAny fields
-	public function validateHasAny()
-	{
+	public function validateHasAny(){
 		//Convenience variable
 		$arr = $this->hasAny;		
 		
@@ -186,15 +166,12 @@ class Mail
 		$valid = true;
 		
 		//Check through hasAny array for invalid items
-		for($i=0; $i<sizeof($arr); $i++)
-		{
-			if(! (Regex::hasAny($arr[$i]["types"], $arr[$i]["value"])) )
-			{
+		for($i=0; $i<sizeof($arr); $i++){
+			if(! (Regex::hasAny($arr[$i]["types"], $arr[$i]["value"])) ){
 				$valid = false;
 				break;
 			}
-			else
-			{
+			else{
 				//Take this field out of the primary array
 				unset($this->postArr[ $arr[$i]["field"] ]);
 			}
@@ -203,8 +180,7 @@ class Mail
 	}
 	
 	//Validate the hasNone fields
-	public function validateHasNone()
-	{
+	public function validateHasNone(){
 		//Convenience variable
 		$arr = $this->hasNone;
 				
@@ -212,15 +188,12 @@ class Mail
 		$valid = true;
 		
 		//Check through hasNone array for invalid items
-		for($i=0; $i<sizeof($arr); $i++)
-		{
-			if(! (Regex::hasNone($arr[$i]["types"], $arr[$i]["value"])) )
-			{
+		for($i=0; $i<sizeof($arr); $i++){
+			if(! (Regex::hasNone($arr[$i]["types"], $arr[$i]["value"])) ){
 				$valid = false;
 				break;
 			}
-			else
-			{
+			else{
 				//Take this field out of the primary array
 				unset($this->postArr[ $arr[$i]["field"] ]);
 			}
@@ -229,8 +202,7 @@ class Mail
 	}
 	
 	//Validate hasAny, hasNone, and normal fields
-	public function valid()
-	{
+	public function valid(){
 		$valid = false;
 		
 		//If all are valid, and all required fields are
@@ -240,8 +212,7 @@ class Mail
 			$this->validateHasAny() &&
 			$this->validateHasNone() &&
 			$this->validateIs()			
-		)
-		{
+		){
 			$valid = true;	
 		}		
 		return $valid;		
@@ -253,32 +224,27 @@ class Mail
 	//------------------------------------------------------------
 	
 	//Append a field/value pair to the email body
-	public function append($field, $value)
-	{
+	public function append($field, $value){
 		$this->body .= $field . ": " . $value . "\n";
 	}
 	
 	//Append a string to the email body with a trailing new line.
-	public function println($str = "\n")
-	{
+	public function println($str = "\n"){
 		$this->body .= $str . "\n";
 	}
 			
 	//Attempt to send mail. Return the boolean result
-	public function send()
-	{
+	public function send(){
 		return mail($this->to, $this->subject, $this->body, $this->headers);
 	}
 	
 	//Append all fields and values to the email body
-	public function appendAll()
-	{
+	public function appendAll(){
 		//Prepare to use an array for pushing field:value pairs
 		$form = array();
 		
 		//Go through validateIs()
-		foreach($this->postArr as $field => $value)
-		{
+		foreach($this->postArr as $field => $value){
 			if(isset($this->customDescriptions[$field])) {
 				$description = $this->customDescriptions[$field]; }
 			else {
@@ -287,8 +253,7 @@ class Mail
 		}
 		
 		//Go through validateHasAny()
-		for($i=0; $i<sizeof($this->hasAny); $i++)
-		{
+		for($i=0; $i<sizeof($this->hasAny); $i++){
 			$field = $this->hasAny[$i]["field"];
 			$description = $this->hasAny[$i]["description"];
 			$value = $this->hasAny[$i]["value"];
@@ -297,8 +262,7 @@ class Mail
 		}
 		
 		//Go through validateHasNone()
-		for($i=0; $i<sizeof($this->hasNone); $i++)
-		{
+		for($i=0; $i<sizeof($this->hasNone); $i++){
 			$field = $this->hasNone[$i]["field"];
 			$description = $this->hasNone[$i]["description"];
 			$value = $this->hasNone[$i]["value"];
@@ -307,22 +271,18 @@ class Mail
 		}		
 
 		//If an append order is specified, sort it.
-		if(!empty($this->appendOrder))
-		{
+		if(!empty($this->appendOrder)){
 			$tempArr = array();
 			
-			for($i=0; $i<sizeof($form); $i++)
-			{
+			for($i=0; $i<sizeof($form); $i++){
 				$tempArr[$i] = $form[$this->appendOrder[$i]];
 			}
 			$form = $tempArr;
 		}
 
 		//Remove empty fields that are not required
-		for($i=0; $i<sizeof($form); $i++)
-		{
-			if( empty($form[$i][1]) )
-			{
+		for($i=0; $i<sizeof($form); $i++){
+			if( empty($form[$i][1]) ){
 				unset($form[$i]);
 			}
 		}
@@ -331,8 +291,7 @@ class Mail
 
 
 		//Append all fields
-		foreach($form as $arr)
-		{
+		foreach($form as $arr){
 			$this->append($arr[0], $arr[1]);
 		}
 	}
