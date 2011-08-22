@@ -84,10 +84,10 @@ function Form(id,options){
 
 		//If inputs is empty, just make it the current field jqobject
 		if(jQuery.isEmptyObject(settings.inputs)){
-			settings.inputs = $("*[name='" +name+ "']");
+			settings.inputs = $(":input[name='" +name+ "']");
 		}
 		else{
-			settings.inputs = $(settings.inputs).add($("*[name='" +name+ "']"));
+			settings.inputs = $(settings.inputs).add($(":input[name='" +name+ "']"));
 		}
 	};
 
