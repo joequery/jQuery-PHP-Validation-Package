@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once("../local-config.php");
 date_default_timezone_set('America/Chicago');
 //------------------------------------------------------------
 // File: mail.php
@@ -14,18 +13,23 @@ include('Mail.php');
 
 $status = "invalid";  //Initialize the response to server
 
-$mailer = new Mail("joseph@vertstudios.com", $_POST);
+$test = array("name" => "Joseph McCullough",
+	"phone" => "903 330 5057",
+	"email" => "Joseph@vertstudios.com",
+	"message" => "Testing!");
+
+$mailer = new Mail("joseph@vertstudios.com", $test);
 $mailer->setFrom("noreply@vertstudios.com");
-$mailer->setSubject("Crowded6 Contact Form");
+$mailer->setSubject("Test Mail");
 $ajax = $mailer->hasAJAX();
 
 //Make names to nice looking versions
-$nameMap = array(
+$mailer->setDesc(array(
 	"name" => "Name",
 	"phone" => "Phone",
 	"email" => "Email",
 	"message" => "Message"
-);
+));
 
 $mailer->setRequired("name, email, message");
 
@@ -35,24 +39,8 @@ $mailer->hasNone(array(
 ));
     
 //Set order
-$mailer->setOrder("name,usphone,email,message");
+$mailer->setOrder("name,phone,email,message");
+$mailer->appendAll();
 
-if($mailer->valid()){
-    $mailer->appendAll($nameMap);
-	if($mailer->send())	{
-		$status = "thanks";
-	}
-	else{
-		$status = "error";
-	}
-}
-
-//If request was made via AJAX, echo back. If not, redirect.
-if($ajax){
-	echo $status;
-}
-else{
-	$_SESSION["POST"] = $_POST;
-	header("Location: " . ROOTDIR . "contact?status=" . $status);
-}
+echo $mailer->getBody();
 ?>
